@@ -1,0 +1,6 @@
+[submodule "endfield-frontend"]
+	path = endfield-frontend
+	url = git@github.com:endfield-industries-amikom/endfield-frontend.git
+[submodule "endfield-backend"]
+	path = endfield-backend
+	url = git@github.com:endfield-industries-amikom/endfield-backend.git
