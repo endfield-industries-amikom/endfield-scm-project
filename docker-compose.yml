@@ -1,5 +1,6 @@
 services:
   app:
+    # image: 284845684968.dkr.ecr.us-east-1.amazonaws.com/endfield-backend:latest
     build:
       context: ./endfield-backend
       dockerfile: Dockerfile.dev
@@ -9,17 +10,18 @@ services:
       - 3000:3000
     networks:
       - endfield-network
-    depends_on:
-      - postgres
+    # depends_on:
+    #   - postgres
     volumes:
       # Mount entire backend for NestJS watch mode — changes appear instantly
       - ./endfield-backend:/usr/src/app:Z
       # Preserve container's node_modules (host may have different OS / none)
       # Avoids reinstalling dependencies on every build
       # Uses docker / podman compose down -v app to delete the volume
-      - /usr/src/app/node_modules
+      # - /usr/src/app/node_modules
 
   frontend:
+    # image: 284845684968.dkr.ecr.us-east-1.amazonaws.com/endfield-frontend:latest
     build:
       context: ./endfield-frontend
       dockerfile: Dockerfile.dev
@@ -39,16 +41,16 @@ services:
       - /app/.react-router
       - /app/build
 
-  postgres:
-    environment:
-      POSTGRES_USER: endfield
-      POSTGRES_PASSWORD: endfield
-      POSTGRES_DB: endfield
-    image: docker.io/library/postgres:17
-    networks:
-      - endfield-network
-    volumes:
-      - ./db-data:/var/lib/postgresql/data:Z
+  # postgres:
+  #   environment:
+  #     POSTGRES_USER: endfield
+  #     POSTGRES_PASSWORD: endfield
+  #     POSTGRES_DB: endfield
+  #   image: docker.io/library/postgres:17
+  #   networks:
+  #     - endfield-network
+  #   volumes:
+  #     - ./db-data:/var/lib/postgresql/data:Z
 
   # pgadmin:
   #   image: dpage/pgadmin4
