@@ -1,0 +1,79 @@
+services:
+  app:
+    # image: 284845684968.dkr.ecr.us-east-1.amazonaws.com/endfield-backend:latest
+    build:
+      context: ./endfield-backend
+      dockerfile: Dockerfile.dev
+    env_file:
+      - ./endfield-backend/.env.development.local
+    ports:
+      - 3000:3000
+    networks:
+      - endfield-network
+    # depends_on:
+    #   - postgres
+    volumes:
+      # Mount entire backend for NestJS watch mode — changes appear instantly
+      - ./endfield-backend:/usr/src/app:Z
+      # Preserve container's node_modules (host may have different OS / none)
+      # Avoids reinstalling dependencies on every build
+      # Uses docker / podman compose down -v app to delete the volume
+      # - /usr/src/app/node_modules
+
+  frontend:
+    # image: 284845684968.dkr.ecr.us-east-1.amazonaws.com/endfield-frontend:latest
+    build:
+      context: ./endfield-frontend
+      dockerfile: Dockerfile.dev
+    env_file:
+      - ./endfield-frontend/.env.development
+    ports:
+      - 8080:5173
+    networks:
+      - endfield-network
+    depends_on:
+      - app
+    volumes:
+      # Mount entire frontend for Vite HMR — changes appear instantly
+      - ./endfield-frontend:/app:Z
+      # Preserve generated / container-specific directories
+      - /app/node_modules
+      - /app/.react-router
+      - /app/build
+
+  # postgres:
+  #   environment:
+  #     POSTGRES_USER: endfield
+  #     POSTGRES_PASSWORD: endfield
+  #     POSTGRES_DB: endfield
+  #   image: docker.io/library/postgres:17
+  #   networks:
+  #     - endfield-network
+  #   volumes:
+  #     - ./db-data:/var/lib/postgresql/data:Z
+
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@endfield.com
+  #     PGADMIN_DEFAULT_PASSWORD: endfield
+  #     POSTGRES_HOST: postgres
+  #     POSTGRES_USER: endfield
+  #     POSTGRES_PASSWORD: endfield
+  #     POSTGRES_DB: endfield
+  #     PGADMIN_CONFIG_SERVER_MODE: False
+  #     PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: False
+  #   ports:
+  #     - 5050:80
+  #   networks:
+  #     - endfield-network
+
+networks:
+  endfield-network:
+    driver: bridge
+
+volumes:
+  db_data:
+    driver: local

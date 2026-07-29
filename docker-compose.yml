@@ -1,45 +1,45 @@
 services:
   app:
-    # image: 284845684968.dkr.ecr.us-east-1.amazonaws.com/endfield-backend:latest
-    build:
-      context: ./endfield-backend
-      dockerfile: Dockerfile.dev
+    image: ghcr.io/endfield-industries-amikom/endfield-backend:latest
+    # build:
+    #   context: ./endfield-backend
+    #   dockerfile: Dockerfile
     env_file:
-      - ./endfield-backend/.env.development.local
+      - .env.production.local
     ports:
-      - 3000:3000
+      - "0.0.0.0:3000:3000"
     networks:
       - endfield-network
     # depends_on:
     #   - postgres
-    volumes:
-      # Mount entire backend for NestJS watch mode — changes appear instantly
-      - ./endfield-backend:/usr/src/app:Z
-      # Preserve container's node_modules (host may have different OS / none)
-      # Avoids reinstalling dependencies on every build
-      # Uses docker / podman compose down -v app to delete the volume
-      # - /usr/src/app/node_modules
+    # volumes:
+    #   # Mount entire backend for NestJS watch mode — changes appear instantly
+    #   - ./endfield-backend:/usr/src/app:Z
+    #   # Preserve container's node_modules (host may have different OS / none)
+    #   # Avoids reinstalling dependencies on every build
+    #   # Uses docker / podman compose down -v app to delete the volume
+    #   # - /usr/src/app/node_modules
 
   frontend:
-    # image: 284845684968.dkr.ecr.us-east-1.amazonaws.com/endfield-frontend:latest
-    build:
-      context: ./endfield-frontend
-      dockerfile: Dockerfile.dev
+    image: 284845684968.dkr.ecr.us-east-1.amazonaws.com/endfield-frontend:latest
+    # build:
+    #   context: ./endfield-frontend
+    #   dockerfile: Dockerfile
     env_file:
-      - ./endfield-frontend/.env.development.local
+      - ./endfield-frontend/.env.production.local
     ports:
-      - 8080:5173
+      - '0.0.0.0:8081:5173'
     networks:
       - endfield-network
     depends_on:
       - app
-    volumes:
-      # Mount entire frontend for Vite HMR — changes appear instantly
-      - ./endfield-frontend:/app:Z
-      # Preserve generated / container-specific directories
-      - /app/node_modules
-      - /app/.react-router
-      - /app/build
+  #   volumes:
+  #     # Mount entire frontend for Vite HMR — changes appear instantly
+  #     - ./endfield-frontend:/app:Z
+  #     # Preserve generated / container-specific directories
+  #     - /app/node_modules
+  #     - /app/.react-router
+  #     - /app/build
 
   # postgres:
   #   environment:
@@ -72,8 +72,7 @@ services:
 
 networks:
   endfield-network:
-    driver: bridge
 
-volumes:
-  db_data:
-    driver: local
+# volumes:
+#   db_data:
+#     driver: local
