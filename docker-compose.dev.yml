@@ -26,7 +26,7 @@ services:
       context: ./endfield-frontend
       dockerfile: Dockerfile.dev
     env_file:
-      - ./endfield-frontend/.env.development
+      - ./endfield-frontend/.env.development.local
     ports:
       - 8080:5173
     networks:
